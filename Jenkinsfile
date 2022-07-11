@@ -7,7 +7,17 @@ stage('Loading Jenkins file') {
 pipeline {
 
   agent any
-
+  parameters {
+    choice(choices: 'qa\nuat\nprod\n', description: 'Which environment?', name: 'DEPLOY_ENV_CHOICE')
+    extendedChoice(
+    name: 'tagName',
+    defaultValue: '',
+    description: 'tag name',
+    type: 'PT_SINGLE_SELECT',
+    groovyScript: """def gettags = ("git ls-remote -t https://github.com/Gale43/participACTION-Loyalty-Engine.git").execute()
+        return gettags.text.readLines().collect { it.split()[1].replaceAll('refs/tags/', '').replaceAll("\\\\^\\\\{\\\\}", '')}
+                    """,)
+  }
   stages {
     stage('Loading Jenkins file'){
       environment {
@@ -18,8 +28,8 @@ pipeline {
       }
       steps {
         // Checkout code from Jenkinsfile-repo
-        // git(url: '', branch: '')
-        checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/main']], 
+        // git(url: '', branch: '')          
+        checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: "${params.tagName}"]], 
           doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '.Build-Dir']],
           submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/IshwaryaLakshmiC/Jenkins-repo']]]
         sh "echo Pipeline Build Number: ${build_branch}"
