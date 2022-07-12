@@ -23,6 +23,7 @@ pipeline {
           doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: '.Build-Dir']],
           submoduleCfg: [], userRemoteConfigs: [[credentialsId: '59996219-c72a-4010-9758-8490aeb84767', url: 'https://github.com/IshwaryaLakshmiC/Jenkins-repo']]]
         sh "echo Pipeline Build Number: ${build_branch}"
+          sh "echo ${BRANCH}"
         // sh "echo Pipeline Build Number: ${build_number}"
         // sh "echo Pipeline Build Job: ${build_job}"
         // sh "echo Pipeline Build URL: ${build_url}"
